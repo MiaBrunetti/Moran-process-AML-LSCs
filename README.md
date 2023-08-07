@@ -11,4 +11,4 @@ To create Figure 3 in the paper, run "Commands_Toxicity_fitting.m" in folder "Fi
 
 To create Figure 4 in the paper, first save work from "Commands_PK_fitting.m", "Commands_Cell_Viability_fitting.m", and "Commands_Toxicity_fitting.m" in folder "Figure 4". Then, run "Commands_merge_structure.m" and save work in folder "Figure 4". Finally, run "Commands_Treatment_Model.m" in folder "Figure 4".
 
-To create Figure 4 in the paper, first save work from "Commands_Treatment_Model.m" in folder "Figure 5". Then, run "Commands_MoranProcessAML.m" in folder "Figure 5".
+To create Figure 5 in the paper, first save work from "Commands_Treatment_Model.m" in folder "Figure 5". Then, run "Commands_MoranProcessAML.m" in folder "Figure 5".
