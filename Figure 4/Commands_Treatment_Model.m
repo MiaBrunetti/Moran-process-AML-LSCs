@@ -1,6 +1,6 @@
 %% Commands for treatment model
 
-%load merged work (Commands_merge_structure.mat)
+%load work from Commands_merge_structure.mat
 ProA = load('ProA_PKPD.mat');
 Dig = load('Digoxin_PKPD.mat');
 Oua = load('Ouabain_PKPD.mat');
