@@ -1,6 +1,6 @@
 %% Commands for Moran model of stem cells
 
-%load work (Commands_Moran_ProcessAML.mat)
+%load work form Commands_Moran_ProcessAML.mat
 ProA = load('ProA_TreatmentModel.mat');
 Dig = load('Digoxin_TreatmentModel.mat');
 Oua = load('Ouabain_TreatmentModel.mat');
