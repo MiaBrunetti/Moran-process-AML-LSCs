@@ -1,6 +1,6 @@
 %% Commands for treatment model
 
-%load work from Figures S1 (Commands_PK_fitting.mat), 2 (Commands_Cell_Viability_fitting.mat), and 3 (Commands_Toxicity_fitting.mat)
+%load work from Commands_PK_fitting.mat, Commands_Cell_Viability_fitting.mat, and Commands_Toxicity_fitting.mat
 ProA_PK = load('ProA_PK.mat');
 Dig_PK = load('Digoxin_PK.mat');
 Oua_PK = load('Ouabain_PK.mat');
