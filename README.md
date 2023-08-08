@@ -1,7 +1,7 @@
 # Moran-process-AML-LSCs
 Moran process of stem cell dynamics that describes the stochastic evolution of leukemic stem cells (LSCs) in acute myeloid leukemia (AML) and that integrates population pharmacokinetic-pharmacodynamic (PKPD) models to investigate the clonal reduction potential of anti-LSC drugs.
 
-This code accompanies the paper in JOURNAL NAME titled "Article title" DOI
+This code accompanies the paper titled "Mathematical modelling of clonal reduction therapeutic strategies in acute myeloid leukemia".
 
 To create Figure S1 in the paper, run "Commands_PK_fitting.m" in folder "Figure S1".
 
