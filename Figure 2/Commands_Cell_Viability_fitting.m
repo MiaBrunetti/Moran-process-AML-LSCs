@@ -7,6 +7,9 @@ load('Ouabain_cell_viability_data.mat');
 load('Budesonide_cell_viability_data.mat');
 load('Mometasone_cell_viability_data.mat');
 
+load('AraC_cell_viability_data.mat');
+load('AraC_CellViability.mat');
+
 ProA.units = (1/530.64968)*10^9; %mg/mL to nM
 Dig.units = (1/780.938)*10^9;    %mg/mL to nM
 Oua.units = (1/584.6525)*10^9;   %mg/mL to nM
@@ -56,6 +59,17 @@ Mom.vHSC_dataLB = Mometasone_cell_viability_data(:,4)';
 Mom.vLSC_data = Mometasone_cell_viability_data(:,5)'; 
 Mom.vLSC_dataUB = Mometasone_cell_viability_data(:,6)';
 Mom.vLSC_dataLB = Mometasone_cell_viability_data(:,7)';
+
+AraC.v_dataConc = AraC_CellViability(:,1)'; %in nM 
+AraC.vHSC_data = AraC_CellViability(:,2)'; 
+AraC.vLSC_data = AraC_CellViability(:,3)'; 
+AraC.v_meanConc = AraC_cell_viability_data(:,1)'; %in nM 
+AraC.vHSC_mean = AraC_cell_viability_data(:,2)'; 
+AraC.vHSC_dataUB = AraC_cell_viability_data(:,3)';
+AraC.vHSC_dataLB = AraC_cell_viability_data(:,4)';
+AraC.vLSC_mean = AraC_cell_viability_data(:,5)'; 
+AraC.vLSC_dataUB = AraC_cell_viability_data(:,6)';
+AraC.vLSC_dataLB = AraC_cell_viability_data(:,7)';
 
 %% Parameter estimation
 
@@ -194,6 +208,33 @@ Mom.vLSC_h    = Mom.vLSC_Para_fit(4);
 Mom.vHSC_p = size(Mom.vHSC_Para_fit,2); % Number of parameters
 Mom.vLSC_p = size(Mom.vLSC_Para_fit,2);
 
+%Cytarabine (AraC)
+AraC.vHSC_Emin_guess = 0;
+AraC.vHSC_Emax_guess = AraC_cell_viability_data(1,2);
+AraC.vHSC_IC50_guess = 32.99;
+AraC.vHSC_h_guess = 1;
+AraC.vLSC_Emin_guess = 0;
+AraC.vLSC_Emax_guess = AraC_cell_viability_data(1,5);
+AraC.vLSC_IC50_guess = 7.16;
+AraC.vLSC_h_guess = 1;
+
+AraC.vHSC_Para_guess = [AraC.vHSC_Emin_guess AraC.vHSC_Emax_guess AraC.vHSC_IC50_guess AraC.vHSC_h_guess];
+AraC.vLSC_Para_guess = [AraC.vLSC_Emin_guess AraC.vLSC_Emax_guess AraC.vLSC_IC50_guess AraC.vLSC_h_guess];
+[AraC.vHSC_Para_fit,AraC.vHSC_residual,AraC.vHSC_J] = fitting_IC50_curve(AraC.v_dataConc,AraC.vHSC_data,AraC.vHSC_Para_guess);
+[AraC.vLSC_Para_fit,AraC.vLSC_residual,AraC.vLSC_J] = fitting_IC50_curve(AraC.v_dataConc,AraC.vLSC_data,AraC.vLSC_Para_guess);
+
+AraC.vHSC_Emin = AraC.vHSC_Para_fit(1);
+AraC.vHSC_Emax = AraC.vHSC_Para_fit(2);
+AraC.vHSC_IC50 = AraC.vHSC_Para_fit(3);
+AraC.vHSC_h    = AraC.vHSC_Para_fit(4);
+AraC.vLSC_Emin = AraC.vLSC_Para_fit(1);
+AraC.vLSC_Emax = AraC.vLSC_Para_fit(2);
+AraC.vLSC_IC50 = AraC.vLSC_Para_fit(3);
+AraC.vLSC_h    = AraC.vLSC_Para_fit(4);
+
+AraC.vHSC_p = size(AraC.vHSC_Para_fit,2); % Number of parameters
+AraC.vLSC_p = size(AraC.vLSC_Para_fit,2);
+
 %% Simulating cell viability model
 
 %Proscillaridin A
@@ -235,6 +276,14 @@ Mom.vHSC_datafit = modelfn_Viab(Mom.vHSC_Para_fit,Mom.v_dataConc);
 Mom.vLSC_simConc = logspace(-2,3,1000);
 Mom.vLSC_fit = modelfn_Viab(Mom.vLSC_Para_fit,Mom.vLSC_simConc);
 Mom.vLSC_datafit = modelfn_Viab(Mom.vLSC_Para_fit,Mom.v_dataConc);
+
+%Cytarabine
+AraC.vHSC_simConc = logspace(-2,3,1000);
+AraC.vHSC_fit = modelfn_Viab(AraC.vHSC_Para_fit,AraC.vHSC_simConc);
+AraC.vHSC_datafit = modelfn_Viab(AraC.vHSC_Para_fit,AraC.v_dataConc);
+AraC.vLSC_simConc = logspace(-2,3,1000);
+AraC.vLSC_fit = modelfn_Viab(AraC.vLSC_Para_fit,AraC.vLSC_simConc);
+AraC.vLSC_datafit = modelfn_Viab(AraC.vLSC_Para_fit,AraC.v_dataConc);
 
 %% Bootstrap of residuals: 95% confidence bands of fit
 
@@ -398,6 +447,33 @@ for i = 1:size(Mom.vHSC_simConc,2)
    Mom.vLSCbci_sim(i,:) = prctile(Mom.vLSCb_sim(:,i),[2.5,97.5]);
 end
 
+%Cytarabine
+AraC.vHSC_residsb = AraC.vHSC_residual(AraC.vHSC_indicesb');
+AraC.vLSC_residsb = AraC.vLSC_residual(AraC.vLSC_indicesb');
+AraC.vHSCb = repmat(AraC.vHSC_data,nboot,1) + AraC.vHSC_residsb;
+AraC.vLSCb = repmat(AraC.vLSC_data,nboot,1) + AraC.vLSC_residsb;
+
+AraC.vHSC_Parab = zeros(nboot,AraC.vHSC_p);
+AraC.vLSC_Parab = zeros(nboot,AraC.vLSC_p);
+AraC.vHSCb_sim = zeros(nboot,size(AraC.vHSC_simConc,2));
+AraC.vLSCb_sim = zeros(nboot,size(AraC.vLSC_simConc,2));
+for j = 1:nboot
+   [AraC.vHSC_Parab(j,:),~,~] = fitting_IC50_curve(AraC.v_dataConc,AraC.vHSCb(j,:),AraC.vHSC_Para_guess);
+   [AraC.vLSC_Parab(j,:),~,~] = fitting_IC50_curve(AraC.v_dataConc,AraC.vLSCb(j,:),AraC.vLSC_Para_guess);
+   AraC.vHSCb_sim(j,:) = modelfn_Viab(AraC.vHSC_Parab(j,:),AraC.vHSC_simConc);
+   AraC.vLSCb_sim(j,:) = modelfn_Viab(AraC.vLSC_Parab(j,:),AraC.vLSC_simConc);
+end
+
+AraC.vHSC_cib = prctile(AraC.vHSC_Parab,[2.5 97.5]); % Parameters' 95% bootstrap confidence intervals
+AraC.vLSC_cib = prctile(AraC.vLSC_Parab,[2.5 97.5]);
+
+AraC.vHSCbci_sim = zeros(size(AraC.vHSC_simConc,2),2); % For 95% bootstrap confidence bands
+AraC.vLSCbci_sim = zeros(size(AraC.vLSC_simConc,2),2);
+for i = 1:size(AraC.vHSC_simConc,2)
+   AraC.vHSCbci_sim(i,:) = prctile(AraC.vHSCb_sim(:,i),[2.5,97.5]);
+   AraC.vLSCbci_sim(i,:) = prctile(AraC.vLSCb_sim(:,i),[2.5,97.5]);
+end
+
 %% Simulating fitness advantage
 
 %Proscillaridin A
@@ -421,6 +497,10 @@ Bud.sp = 1.25*(Bud.vLSC_fit./Bud.vLSC_fit(1,1));
 Mom.sd = 1-Mom.vLSC_fit./Mom.vHSC_fit - (1-Mom.vLSC_fit(1,1)./Mom.vHSC_fit(1,1));
 Mom.sp = 1.25*(Mom.vLSC_fit./Mom.vLSC_fit(1,1));
 
+%Cytarabine
+AraC.sd = 1-AraC.vLSC_fit./AraC.vHSC_fit - (1-AraC.vLSC_fit(1,1)./AraC.vHSC_fit(1,1));
+AraC.sp = 1.25*(AraC.vLSC_fit./AraC.vLSC_fit(1,1));
+
 %% Save work
 
 % save('ProA_cell_viability.mat', '-struct', 'ProA');
@@ -428,6 +508,7 @@ Mom.sp = 1.25*(Mom.vLSC_fit./Mom.vLSC_fit(1,1));
 % save('Ouabain_cell_viability.mat', '-struct', 'Oua');
 % save('Budesonide_cell_viability.mat', '-struct', 'Bud');
 % save('Mometasone_cell_viability.mat', '-struct', 'Mom');
+% save('AraC_cell_viability.mat', '-struct', 'AraC');
 
 %% Figure 2A: Cell Viability
 
@@ -527,6 +608,31 @@ xlabel('Concentration (nM)')
 ylabel('Cell Viability (%)')
 title('Mometasone','FontSize',20)
 
+%Cytarabine
+nextile
+hold on 
+% h(1) = scatter(AraC.v_dataConc,AraC.vHSC_data,'o','MarkerEdgeColor','k','MarkerFaceColor','#8EB1DC');
+h(2) = errorbar(AraC.v_meanConc,AraC.vHSC_mean,AraC.vHSC_dataLB,AraC.vHSC_dataUB,'^','MarkerEdgeColor','b','MarkerFaceColor','b','MarkerSize',10,'LineWidth',1.5,'Color','b'); %plotting the data
+h(3) = plot(AraC.vHSC_simConc,AraC.vHSC_fit,'b','LineWidth',2.5); % plotting curve
+h(4) = patch([AraC.vHSC_simConc,fliplr(AraC.vHSC_simConc)],[AraC.vHSCbci_sim(:,1)',fliplr(AraC.vHSCbci_sim(:,2)')],1,'facecolor', 'b', 'edgecolor', 'none', 'facealpha', 0.1); %CI
+% h(5) = scatter(AraC.v_dataConc,AraC.vLSC_data,'o','MarkerEdgeColor','k','MarkerFaceColor','#E58A8C');
+h(6) = errorbar(AraC.v_meanConc,AraC.vLSC_mean,AraC.vLSC_dataLB,AraC.vLSC_dataUB,'o','MarkerEdgeColor','r','MarkerFaceColor','r','MarkerSize',10,'LineWidth',1.5,'Color','r'); %plotting the data
+h(7) = plot(AraC.vLSC_simConc,AraC.vLSC_fit,'r','LineWidth',2.5); % plotting curve
+h(8) = patch([AraC.vLSC_simConc,fliplr(AraC.vLSC_simConc)],[AraC.vLSCbci_sim(:,1)',fliplr(AraC.vLSCbci_sim(:,2)')],1,'facecolor', 'r', 'edgecolor', 'none', 'facealpha', 0.1); %CI
+
+l(1) = plot(nan,nan,'s','MarkerFaceColor','b','MarkerEdgeColor','b','MarkerSize',10); % plotting curve
+l(2) = plot(nan,nan,'o','MarkerFaceColor','r','MarkerEdgeColor','r','MarkerSize',10); % plotting curve
+l(3) = plot(nan,nan,'b','LineWidth',1.5); % plotting curve
+l(4) = plot(nan,nan,'r','LineWidth',1.5); % plotting curve
+hold off
+% legend(l, {'CD34+ Cord Blood','CD34+ AML 8227','Fit for HSC', 'Fit for LSC'},'Orientation','horizontal','Location', 'southoutside','FontSize',14)
+set(gca,'xscale','log','FontSize',18,'TickDir','out','TickLength',[0.02 0.025])
+xlim([0 1000])
+ylim([0 105])
+xlabel('Concentration (nM)')
+ylabel('Cell Viability (%)')
+title('Cytarabine','FontSize',20)
+
 %% Figure 2B: Fitness Advantages
 
 c = char('#0B84A5','#F6C85F');
@@ -609,3 +715,22 @@ xlabel('Concentration (nM)')
 ylabel('Fitness Value')
 set(gca,'xscale','log','FontSize',18,'TickDir','out','TickLength',[0.02 0.025])
 title('Mometasone','FontSize',20)
+
+%Cytarabine
+c2 = char('#0B84A5','#000000');
+c2 = hex2rgb(c2);
+
+nexttile 
+hold on
+legend_plot1 = plot(AraC.vHSC_simConc,AraC.sd,'LineWidth',3,'Color',c2(2,:));
+legend_plot2 = plot(AraC.vHSC_simConc,AraC.sp,'LineWidth',3,'Color',c2(1,:));
+hold off
+% legend([legend_plot1 legend_plot2], {'s_d','s_p'},'Orientation','vertical','Location','eastoutside','FontSize',14)
+set(gca,'FontSize',18,'TickDir','out','TickLength',[0.02 0.025])
+set(gca, 'ytick', 0:0.25:1.5);
+xlim([0 1000])
+ylim([-0.1 1.50])
+xlabel('Concentration (nM)')
+ylabel('Fitness Value')
+set(gca,'xscale','log','FontSize',18,'TickDir','out','TickLength',[0.02 0.025])
+title('Cytarabine','FontSize',20)
