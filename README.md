@@ -14,6 +14,7 @@ Authors: Mia Brunetti<sup>1,2</sup>; Isabella A. Iasenza<sup>3,4</sup>; Adrianne
 | Folder | Description |
 |:-----|:------------|
 | Cell viability | Cell viability data and commands for IC50 curve fitting. |
+| Cytarabine viability data | Original viability data of HSCs and LSCs under cytarabine. |
 | Figure realization | Commands and functions for creating figures. |
 | Moran process | Commands for running the Moran process. |
 | PKPD responses | Commands for creating PKPD treatement models and for merging MATLAB structures. |
