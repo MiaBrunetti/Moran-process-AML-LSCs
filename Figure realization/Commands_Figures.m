@@ -365,7 +365,7 @@ ylim([1e-05,2e+02])
 set(gca,'yscale','log','FontSize',18,'TickDir','out','TickLength',[0.02 0.025])
 title('Cytarabine','FontSize',20)
 
-%% Figure for LSC expansion and viability
+%% Figure 5A: LSC expansion and viability of cardiac glycodides
 
 c_CarGly = char('#702A8C','#BF2669','#FF7326','#FFCC0D','#000000');
 color_CarGly = hex2rgb(c_CarGly);
@@ -425,7 +425,7 @@ xlim([0 sim_time/(60*24)])
 ylim([0 120])
 set(gca,'FontSize',18,'TickDir','out','TickLength',[0.02 0.025])
 
-%% Figure for LSC expansion with glucocorticoid treatment
+%% Figure 5B-C: LSC expansion and viability of glucocorticoids and cytarabine
 
 c_Glu = char('#FF194D','#FFCC0D','#6CADA1','#2A5F65','#000000');
 color_Glu = hex2rgb(c_Glu);
@@ -500,417 +500,228 @@ xlim([0 sim_time/(60*24)])
 ylim([0 120])
 set(gca,'FontSize',18,'TickDir','out','TickLength',[0.02 0.025])
 
-%% Code to save figures
-% 
-% set(F2A,'Units','Inches');
-% pos = get(F2A,'Position');
-% set(F2A,'PaperPositionMode','Auto','PaperUnits','Inches','PaperSize',[pos(3), pos(4)])
-% print(F2A,'Cell Viability','-dpdf','-r0')
-% 
-% set(F2B,'Units','Inches');
-% pos = get(F2B,'Position');
-% set(F2B,'PaperPositionMode','Auto','PaperUnits','Inches','PaperSize',[pos(3), pos(4)])
-% print(F2B,'Fitness Advantage','-dpdf','-r0')
-% 
-% set(F4A,'Units','Inches');
-% pos = get(F4A,'Position');
-% set(F4A,'PaperPositionMode','Auto','PaperUnits','Inches','PaperSize',[pos(3), pos(4)])
-% print(F4A,'PKPD CarGly','-dpdf','-r0')
-% 
-% set(F4B,'Units','Inches');
-% pos = get(F4B,'Position');
-% set(F4B,'PaperPositionMode','Auto','PaperUnits','Inches','PaperSize',[pos(3), pos(4)])
-% print(F4B,'PK GluAraC','-dpdf','-r0')
-% 
-% set(F5A,'Units','Inches');
-% pos = get(F5A,'Position');
-% set(F5A,'PaperPositionMode','Auto','PaperUnits','Inches','PaperSize',[pos(3), pos(4)])
-% print(F5A,'Moran CarGly','-dpdf','-r0')
-% 
-% set(F5B,'Units','Inches');
-% pos = get(F5B,'Position');
-% set(F5B,'PaperPositionMode','Auto','PaperUnits','Inches','PaperSize',[pos(3), pos(4)])
-% print(F5B,'Moran GluAraC','-dpdf','-r0')
+%% Figure 5D-G: Comparaison glucocorticoids to cytarabine response
 
-%% Mean value and standard deviation of Moran process at day 90 & 365
+% Mean value and standard deviation of Moran process at day 90, 180 & 365
+index365 = 365*24*60*div;
+index180 = 180*24*60*div;
+index90 = 90*24*60*div;
 
-ProA_Moran = ProA.LSC;
-Dig_Moran = Dig.LSC;
-Oua_Moran = Oua.LSC;
+AraC_Moran = AraC.LSC;
 Bud_Moran = Bud.LSC;
 Mom_Moran = Mom.LSC;
 
-ProA_Via = ProA.vLSC;
-Dig_Via = Dig.vLSC;
-Oua_Via = Oua.vLSC;
-Bud_Via = Bud.vLSC;
-Mom_Via = Mom.vLSC;
-
-index365 = 365*24*60*div;
-index90 = 90*24*60*div;
-
-% Proscillaridin A
-ProA_365 = zeros(100,size(ProA_Moran,1));
-ProA_90 = zeros(100,size(ProA_Moran,1));
-ProA_v365 = zeros(100,size(ProA_Via,1));
-ProA_v90 = zeros(100,size(ProA_Via,1));
-
-for i = 1:size(ProA_Moran,1) %last index is no treatment
-    data_LSC = ProA_Moran{i,1};
-
-    % Finding LSC distributions at day 365 and 90
-    ProA_365(:,i) = data_LSC(:,index365);
-    ProA_90(:,i) = data_LSC(:,index90);
-end
-
-for i = 1:size(ProA_Via,1)
-    data_vLSC = ProA_Via{i,1};
-
-    % Finding LSC Viability distributions at day 365 and 90
-    ProA_v365(:,i) = data_vLSC(:,index365);
-    ProA_v90(:,i) = data_vLSC(:,index90);
-end
-
-% Digoxin
-Dig_365 = zeros(100,size(Dig_Moran,1));
-Dig_90 = zeros(100,size(Dig_Moran,1));
-Dig_v365 = zeros(100,size(Dig_Via,1));
-Dig_v90 = zeros(100,size(Dig_Via,1));
-
-for i = 1:size(Dig_Moran,1) %last index is no treatment
-    data_LSC = Dig_Moran{i,1};
-
-    % Finding LSC distributions at day 365 and 90
-    Dig_365(:,i) = data_LSC(:,index365);
-    Dig_90(:,i) = data_LSC(:,index90);
-end
-
-for i = 1:size(Dig_Via,1)
-    data_vLSC = Dig_Via{i,1};
-
-    % Finding LSC Viability distributions at day 365 and 90
-    Dig_v365(:,i) = data_vLSC(:,index365);
-    Dig_v90(:,i) = data_vLSC(:,index90);
-end
-
-% Ouabain
-Oua_365 = zeros(100,size(Oua_Moran,1));
-Oua_90 = zeros(100,size(Oua_Moran,1));
-Oua_v365 = zeros(100,size(Oua_Via,1));
-Oua_v90 = zeros(100,size(Oua_Via,1));
-
-for i = 1:size(Oua_Moran,1) %last index is no treatment
-    data_LSC = Oua_Moran{i,1};
-
-    % Finding LSC distributions at day 365 and 90
-    Oua_365(:,i) = data_LSC(:,index365);
-    Oua_90(:,i) = data_LSC(:,index90);
-end
-
-for i = 1:size(Oua_Via,1)
-    data_vLSC = Oua_Via{i,1};
-
-    % Finding LSC Viability distributions at day 365 and 90
-    Oua_v365(:,i) = data_vLSC(:,index365);
-    Oua_v90(:,i) = data_vLSC(:,index90);
-end
-
-% Budesonide
-Bud_365 = zeros(100,size(Bud_Moran,1));
-Bud_90 = zeros(100,size(Bud_Moran,1));
-Bud_v365 = zeros(100,size(Bud_Via,1));
-Bud_v90 = zeros(100,size(Bud_Via,1));
-
-for i = 1:size(Bud_Moran,1) %last index is no treatment
-    data_LSC = Bud_Moran{i,1};
-
-    % Finding LSC distributions at day 365 and 90
-    Bud_365(:,i) = data_LSC(:,index365);
-    Bud_90(:,i) = data_LSC(:,index90);
-end
-
-for i = 1:size(Bud_Via,1)
-    data_vLSC = Bud_Via{i,1};
-
-    % Finding LSC Viability distributions at day 365 and 90
-    Bud_v365(:,i) = data_vLSC(:,index365);
-    Bud_v90(:,i) = data_vLSC(:,index90);
-end
-
-% Mometasone
-Mom_365 = zeros(100,size(Mom_Moran,1));
-Mom_90 = zeros(100,size(Mom_Moran,1));
-Mom_v365 = zeros(100,size(Mom_Via,1));
-Mom_v90 = zeros(100,size(Mom_Via,1));
-
-for i = 1:size(Mom_Moran,1) %last index is no treatment
-    data_LSC = Mom_Moran{i,1};
-
-    % Finding LSC distributions at day 365 and 90
-    Mom_365(:,i) = data_LSC(:,index365);
-    Mom_90(:,i) = data_LSC(:,index90);
-end
-
-for i = 1:size(Mom_Via,1)
-    data_vLSC = Mom_Via{i,1};
-
-    % Finding LSC Viability distributions at day 365 and 90
-    Mom_v365(:,i) = data_vLSC(:,index365);
-    Mom_v90(:,i) = data_vLSC(:,index90);
-end
-
-AraC_Moran = AraC.LSC;
-AraC_Via = AraC.vLSC;
-
-index365 = 365*24*60*div;
-index90 = 90*24*60*div;
-
+%Compare HSC# of lowest efficient doses of budesonide (10nM) and mometasone (1.5nM) vs Ara-C (25 and 125nM)
 AraC_HSC365 = zeros(100,size(AraC_Moran,1));
+AraC_HSC180 = zeros(100,size(AraC_Moran,1));
 AraC_HSC90 = zeros(100,size(AraC_Moran,1));
-AraC_v365 = zeros(100,size(AraC_Via,1));
-AraC_v90 = zeros(100,size(AraC_Via,1));
+
+Bud_HSC365 = zeros(100,size(Bud_Moran,1));
+Bud_HSC180 = zeros(100,size(Bud_Moran,1));
+Bud_HSC90 = zeros(100,size(Bud_Moran,1));
+
+Mom_HSC365 = zeros(100,size(Mom_Moran,1));
+Mom_HSC180 = zeros(100,size(Mom_Moran,1));
+Mom_HSC90 = zeros(100,size(Mom_Moran,1));
 
 for i = 1:size(AraC_Moran,1) %last index is no treatment
     data_LSC = AraC_Moran{i,1};
 
-    % Finding LSC distributions at day 365 and 90
-    AraC_HSC365(:,i) = data_LSC(:,index365);
-    AraC_HSC90(:,i) = data_LSC(:,index90);
+    % Finding LSC distributions at day 365, 183, and 90
+    AraC_HSC365(:,i) = Nd - data_LSC(:,index365);
+    AraC_HSC180(:,i) = Nd - data_LSC(:,index180);
+    AraC_HSC90(:,i) = Nd - data_LSC(:,index90);
 end
 
-for i = 1:size(AraC_Via,1)
-    data_vLSC = AraC_Via{i,1};
+for i = 1:size(Bud_Moran,1) %last index is no treatment
+    data_LSC = Bud_Moran{i,1};
 
-    % Finding LSC Viability distributions at day 365 and 90
-    AraC_v365(:,i) = data_vLSC(:,index365);
-    AraC_v90(:,i) = data_vLSC(:,index90);
+    % Finding LSC distributions at day 365, 183, and 90
+    Bud_HSC365(:,i) = Nd - data_LSC(:,index365);
+    Bud_HSC180(:,i) = Nd - data_LSC(:,index180);
+    Bud_HSC90(:,i) = Nd - data_LSC(:,index90);
 end
 
-%% Boxchart for LSC# and viability at day 90 & 365 with cardiac glycoside treatment
+for i = 1:size(Mom_Moran,1) %last index is no treatment
+    data_LSC = Mom_Moran{i,1};
 
-box_colorCarGly = flipud(color_CarGly);
-
-b_CarGly = figure;
-tiledlayout(2,3,'TileSpacing','compact');
-
-nexttile %Proscillaridin A (day 90)
-fProA_90 = fliplr(ProA_90);
-[N,M] = size(fProA_90);
-hold on
-for i = 1:M
-    boxchart(fProA_90(:,i),'MarkerStyle','none','BoxFaceColor',box_colorCarGly(i,:),'XData',i*ones(N,1))
-    plot(i,mean(fProA_90(:,i)),'*','LineWidth',2,'MarkerSize',10,'MarkerEdgeColor',box_colorCarGly(i,:))
+    % Finding LSC distributions at day 365, 183, and 90
+    Mom_HSC365(:,i) = Nd - data_LSC(:,index365);
+    Mom_HSC180(:,i) = Nd - data_LSC(:,index180);
+    Mom_HSC90(:,i) = Nd - data_LSC(:,index90);
 end
-ax = gca();
-ax.XAxis.Categories = categorical(1:M);
-xticklabels({'0','10','20','30','50'})
-ylabel('LSC Number at Day 90')
-ylim([4500 10000])
-set(gca,'FontSize',18,'TickDir','out','TickLength',[0.02 0.025])
-ax = gca;
-ax.YAxis.Exponent = 3;
-title('Proscillaridin A','FontSize',20)
 
-nexttile %Digoxin (day 90)
-fDig_90 = fliplr(Dig_90);
-[N,M] = size(fDig_90);
-hold on
-for i = 1:M
-    boxchart(fDig_90(:,i),'MarkerStyle','none','BoxFaceColor',box_colorCarGly(i,:),'XData',i*ones(N,1))
-    plot(i,mean(fDig_90(:,i)),'*','LineWidth',2,'MarkerSize',10,'MarkerEdgeColor',box_colorCarGly(i,:))
+HSC_AraC125nM_AraC125nM = [AraC_HSC90(:,1)/mean(AraC_HSC90(:,1)) AraC_HSC180(:,1)/mean(AraC_HSC180(:,1)) AraC_HSC365(:,1)/mean(AraC_HSC365(:,1))];
+HSC_AraC125nM_Bud10nM = [Bud_HSC90(:,2)/mean(AraC_HSC90(:,1)) Bud_HSC180(:,2)/mean(AraC_HSC180(:,1)) Bud_HSC365(:,2)/mean(AraC_HSC365(:,1))];
+HSC_AraC125nM_Mom10nM = [Mom_HSC90(:,2)/mean(AraC_HSC90(:,1)) Mom_HSC180(:,2)/mean(AraC_HSC180(:,1)) Mom_HSC365(:,2)/mean(AraC_HSC365(:,1))];
+HSCAraC125nM_Mom1_25nM = [Mom_HSC90(:,3)/mean(AraC_HSC90(:,1)) Mom_HSC180(:,3)/mean(AraC_HSC180(:,1)) Mom_HSC365(:,3)/mean(AraC_HSC365(:,1))];
+
+HSC_AraC25nM_AraC25nM = [AraC_HSC90(:,2)/mean(AraC_HSC90(:,2)) AraC_HSC180(:,2)/mean(AraC_HSC180(:,2)) AraC_HSC365(:,2)/mean(AraC_HSC365(:,2))];
+HSC_AraC25nM_Bud10nM = [Bud_HSC90(:,2)/mean(AraC_HSC90(:,2)) Bud_HSC180(:,2)/mean(AraC_HSC180(:,2)) Bud_HSC365(:,2)/mean(AraC_HSC365(:,2))];
+HSC_AraC25nM_Mom10nM = [Mom_HSC90(:,2)/mean(AraC_HSC90(:,2)) Mom_HSC180(:,2)/mean(AraC_HSC180(:,2)) Mom_HSC365(:,2)/mean(AraC_HSC365(:,2))];
+HSC_AraC25nM_Mom1_25nM = [Mom_HSC90(:,3)/mean(AraC_HSC90(:,2)) Mom_HSC180(:,3)/mean(AraC_HSC180(:,2)) Mom_HSC365(:,3)/mean(AraC_HSC365(:,2))];
+
+HSC_y125 = [mean(HSC_AraC125nM_AraC125nM); mean(HSC_AraC125nM_Bud10nM); mean(HSCAraC125nM_Mom1_25nM)]';
+HSC_err125 = [std(HSC_AraC125nM_AraC125nM); std(HSC_AraC125nM_Bud10nM); std(HSCAraC125nM_Mom1_25nM)]';
+HSC_y25 = [mean(HSC_AraC25nM_AraC25nM); mean(HSC_AraC25nM_Bud10nM); mean(HSC_AraC25nM_Mom1_25nM)]';
+HSC_err25 = [std(HSC_AraC25nM_AraC25nM); std(HSC_AraC25nM_Bud10nM); std(HSC_AraC25nM_Mom1_25nM)]';
+
+bh_HSC125 = figure; 
+bar(HSC_y125(:,3),'FaceColor',hex2rgb('#33a02c'),'LineWidth',1.5)
+hold on 
+bar(HSC_y125(:,2),'FaceColor',hex2rgb('#b2df8a'),'LineWidth',1.5)
+bar(HSC_y125(:,1),'FaceColor',hex2rgb('#1f78b4'),'LineWidth',1.5)
+errorbar(HSC_y125,HSC_err125,'.k','LineWidth',1.5);
+bh(1) = bar(nan,nan,'FaceColor',hex2rgb('#a6cee3'));
+bh(2) = bar(nan,nan,'FaceColor',hex2rgb('#1f78b4'));
+bh(3) = bar(nan,nan,'FaceColor',hex2rgb('#b2df8a'));
+bh(4) = bar(nan,nan,'FaceColor',hex2rgb('#33a02c'));
+hold off
+xticklabels({'90','180','365'})
+legend(bh,({'25 nM Ara-C','125 nM Ara-C','10 nM Budesonide','1.5 nM Mometasone'}),'Location','bestoutside');
+xlabel('Time (days)')
+ylabel('Fold Change in HSC Number')
+set(gca,'FontSize',18,'TickLength',[0.02 0.025])
+
+bh_HSC25 = figure;
+bar(HSC_y25(:,3),'FaceColor',hex2rgb('#33a02c'),'LineWidth',1.5)
+hold on 
+bar(HSC_y25(:,2),'FaceColor',hex2rgb('#b2df8a'),'LineWidth',1.5)
+bar(HSC_y25(:,1),'FaceColor',hex2rgb('#a6cee3'),'LineWidth',1.5)
+errorbar(HSC_y25,HSC_err25,'.k','LineWidth',1.5);
+bh(1) = bar(nan,nan,'FaceColor',hex2rgb('#a6cee3'));
+bh(2) = bar(nan,nan,'FaceColor',hex2rgb('#1f78b4'));
+bh(3) = bar(nan,nan,'FaceColor',hex2rgb('#b2df8a'));
+bh(4) = bar(nan,nan,'FaceColor',hex2rgb('#33a02c'));
+hold off
+xticklabels({'90','180','365'})
+legend(bh,({'25 nM Ara-C','125 nM Ara-C','10 nM Budesonide','1.5 nM Mometasone'}),'Location','bestoutside');
+xlabel('Time (days)')
+ylabel('Fold Change in HSC Number')
+set(gca,'FontSize',18,'TickLength',[0.02 0.025])
+
+%Compare LSC# of lowest efficient doses of Budesonide (10nM) and mometasone (1.5nM) vs Ara-C (25 and 125nM)
+AraC_LSC365 = zeros(100,size(AraC_Moran,1));
+AraC_LSC180 = zeros(100,size(AraC_Moran,1));
+AraC_LSC90 = zeros(100,size(AraC_Moran,1));
+
+Bud_LSC365 = zeros(100,size(Bud_Moran,1));
+Bud_LSC180 = zeros(100,size(Bud_Moran,1));
+Bud_LSC90 = zeros(100,size(Bud_Moran,1));
+
+Mom_LSC365 = zeros(100,size(Mom_Moran,1));
+Mom_LSC180 = zeros(100,size(Mom_Moran,1));
+Mom_LSC90 = zeros(100,size(Mom_Moran,1));
+
+for i = 1:size(AraC_Moran,1) %last index is no treatment
+    data_LSC = AraC_Moran{i,1};
+
+    % Finding LSC distributions at day 365, 183, and 90
+    AraC_LSC365(:,i) = data_LSC(:,index365);
+    AraC_LSC180(:,i) = data_LSC(:,index180);
+    AraC_LSC90(:,i) = data_LSC(:,index90);
 end
-ax = gca();
-ax.XAxis.Categories = categorical(1:M);
-xticklabels({'0','10','20','30','50'})
-ylim([3750 10000])
-set(gca,'FontSize',18,'TickDir','out','TickLength',[0.02 0.025])
-ax = gca;
-ax.YAxis.Exponent = 3;
-title('Digoxin','FontSize',20)
 
-nexttile %Ouabain (day 90)
-fOua_90 = fliplr(Oua_90);
-[N,M] = size(fOua_90);
-hold on
-for i = 1:M
-    boxchart(fOua_90(:,i),'MarkerStyle','none','BoxFaceColor',box_colorCarGly(i,:),'XData',i*ones(N,1))
-    plot(i,mean(fOua_90(:,i)),'*','LineWidth',2,'MarkerSize',10,'MarkerEdgeColor',box_colorCarGly(i,:))
+for i = 1:size(Bud_Moran,1) %last index is no treatment
+    data_LSC = Bud_Moran{i,1};
+
+    % Finding LSC distributions at day 365, 183, and 90
+    Bud_LSC365(:,i) = data_LSC(:,index365);
+    Bud_LSC180(:,i) = data_LSC(:,index180);
+    Bud_LSC90(:,i) = data_LSC(:,index90);
 end
-ax = gca();
-ax.XAxis.Categories = categorical(1:M);
-xticklabels({'0','10','20','30','50'})
-ylim([6250 10000])
-set(gca,'FontSize',18,'TickDir','out','TickLength',[0.02 0.025])
-ax = gca;
-ax.YAxis.Exponent = 3;
-title('Ouabain','FontSize',20)
 
-nexttile %Proscillaridin A (day 365)
-fProA_365 = fliplr(ProA_365);
-[N,M] = size(fProA_365);
-hold on
-for i = 1:M
-    boxchart(fProA_365(:,i),'MarkerStyle','none','BoxFaceColor',box_colorCarGly(i,:),'XData',i*ones(N,1))
-    plot(i,mean(fProA_365(:,i)),'*','LineWidth',2,'MarkerSize',10,'MarkerEdgeColor',box_colorCarGly(i,:))
+for i = 1:size(Mom_Moran,1) %last index is no treatment
+    data_LSC = Mom_Moran{i,1};
+
+    % Finding LSC distributions at day 365, 183, and 90
+    Mom_LSC365(:,i) = data_LSC(:,index365);
+    Mom_LSC180(:,i) = data_LSC(:,index180);
+    Mom_LSC90(:,i) = data_LSC(:,index90);
 end
-ax = gca();
-ax.XAxis.Categories = categorical(1:M);
-xticklabels({'0','10','20','30','50'})
-ylabel('LSC Number at Day 365')
-ylim([9750 4e+04])
-xlabel('Concentration (nM)')
-set(gca,'FontSize',18,'TickDir','out','TickLength',[0.02 0.025])
 
-nexttile %Digoxin (day 365)
-fDig_365 = fliplr(Dig_365);
-[N,M] = size(fDig_365);
-hold on
-for i = 1:M
-    boxchart(fDig_365(:,i),'MarkerStyle','none','BoxFaceColor',box_colorCarGly(i,:),'XData',i*ones(N,1))
-        plot(i,mean(fDig_365(:,i)),'*','LineWidth',2,'MarkerSize',10,'MarkerEdgeColor',box_colorCarGly(i,:))
-end
-ax = gca();
-ax.XAxis.Categories = categorical(1:M);
-xticklabels({'0','10','20','30','50'})
-ylim([0.4e+04 4e+04])
-xlabel('Concentration (nM)')
-set(gca,'FontSize',18,'TickDir','out','TickLength',[0.02 0.025])
+LSC_AraC125nM_AraC125nM = [AraC_LSC90(:,1)/mean(AraC_LSC90(:,1)) AraC_LSC180(:,1)/mean(AraC_LSC180(:,1)) AraC_LSC365(:,1)/mean(AraC_LSC365(:,1))];
+LSC_AraC125nM_Bud10nM = [Bud_LSC90(:,2)/mean(AraC_LSC90(:,1)) Bud_LSC180(:,2)/mean(AraC_LSC180(:,1)) Bud_LSC365(:,2)/mean(AraC_LSC365(:,1))];
+LSC_AraC125nM_Mom10nM = [Mom_LSC90(:,2)/mean(AraC_LSC90(:,1)) Mom_LSC180(:,2)/mean(AraC_LSC180(:,1)) Mom_LSC365(:,2)/mean(AraC_LSC365(:,1))];
+LSCAraC125nM_Mom1_25nM = [Mom_LSC90(:,3)/mean(AraC_LSC90(:,1)) Mom_LSC180(:,3)/mean(AraC_LSC180(:,1)) Mom_LSC365(:,3)/mean(AraC_LSC365(:,1))];
 
-nexttile %Ouabain (day 365)
-fOua_365 = fliplr(Oua_365);
-[N,M] = size(Oua_365);
-hold on
-for i = 1:M
-    boxchart(fOua_365(:,i),'MarkerStyle','none','BoxFaceColor',box_colorCarGly(i,:),'XData',i*ones(N,1))
-        plot(i,mean(fOua_365(:,i)),'*','LineWidth',2,'MarkerSize',10,'MarkerEdgeColor',box_colorCarGly(i,:))
-end
-ax = gca();
-ax.XAxis.Categories = categorical(1:M);
-xticklabels({'0','10','20','30','50'})
-ylim([2.4e+04 4e+04])
-xlabel('Concentration (nM)')
-set(gca,'FontSize',18,'TickDir','out','TickLength',[0.02 0.025])
+LSC_AraC25nM_AraC25nM = [AraC_LSC90(:,2)/mean(AraC_LSC90(:,2)) AraC_LSC180(:,2)/mean(AraC_LSC180(:,2)) AraC_LSC365(:,2)/mean(AraC_LSC365(:,2))];
+LSC_AraC25nM_Bud10nM = [Bud_LSC90(:,2)/mean(AraC_LSC90(:,2)) Bud_LSC180(:,2)/mean(AraC_LSC180(:,2)) Bud_LSC365(:,2)/mean(AraC_LSC365(:,2))];
+LSC_AraC25nM_Mom10nM = [Mom_LSC90(:,2)/mean(AraC_LSC90(:,2)) Mom_LSC180(:,2)/mean(AraC_LSC180(:,2)) Mom_LSC365(:,2)/mean(AraC_LSC365(:,2))];
+LSC_AraC25nM_Mom1_25nM = [Mom_LSC90(:,3)/mean(AraC_LSC90(:,2)) Mom_LSC180(:,3)/mean(AraC_LSC180(:,2)) Mom_LSC365(:,3)/mean(AraC_LSC365(:,2))];
 
-%% Boxchart for LSC# and viability at day 90 & 365 with glucocorticoid treatment
+LSC_y125 = [mean(LSC_AraC125nM_AraC125nM); mean(LSC_AraC125nM_Bud10nM); mean(LSCAraC125nM_Mom1_25nM)]';
+LSC_err125 = [std(LSC_AraC125nM_AraC125nM); std(LSC_AraC125nM_Bud10nM); std(LSCAraC125nM_Mom1_25nM)]';
+LSC_y25 = [mean(LSC_AraC25nM_AraC25nM); mean(LSC_AraC25nM_Bud10nM); mean(LSC_AraC25nM_Mom1_25nM)]';
+LSC_err25 = [std(LSC_AraC25nM_AraC25nM); std(LSC_AraC25nM_Bud10nM); std(LSC_AraC25nM_Mom1_25nM)]';
 
-c_AraC = char('#B33DC6','#27AEEF','#87BC45','#EF9B20','#000000');
-color_AraC = hex2rgb(c_AraC);
+bh_LSC125 = figure; 
+bar(LSC_y125(:,1),'FaceColor',hex2rgb('#1f78b4'),'LineWidth',1.5)
+hold on 
+bar(LSC_y125(:,2),'FaceColor',hex2rgb('#b2df8a'),'LineWidth',1.5)
+bar(LSC_y125(:,3),'FaceColor',hex2rgb('#33a02c'),'LineWidth',1.5)
+errorbar(LSC_y125,LSC_err125,'.k','LineWidth',1.5);
+bh(1) = bar(nan,nan,'FaceColor',hex2rgb('#a6cee3'));
+bh(2) = bar(nan,nan,'FaceColor',hex2rgb('#1f78b4'));
+bh(3) = bar(nan,nan,'FaceColor',hex2rgb('#b2df8a'));
+bh(4) = bar(nan,nan,'FaceColor',hex2rgb('#33a02c'));
+hold off
+xticklabels({'90','180','365'})
+legend(bh,({'25 nM Ara-C','125 nM Ara-C','10 nM Budesonide','1.5 nM Mometasone'}),'Location','bestoutside');
+xlabel('Time (days)')
+ylabel('Fold Change in LSC Number')
+set(gca,'FontSize',18,'TickLength',[0.02 0.025])
 
-box_colorGlu = flipud(color_Glu);
-box_color = flipud(color_AraC);
+bh_LSC25 = figure;
+bar(LSC_y25(:,1),'FaceColor',hex2rgb('#a6cee3'),'LineWidth',1.5)
+hold on 
+bar(LSC_y25(:,2),'FaceColor',hex2rgb('#b2df8a'),'LineWidth',1.5)
+bar(LSC_y25(:,3),'FaceColor',hex2rgb('#33a02c'),'LineWidth',1.5)
+errorbar(LSC_y25,LSC_err25,'.k','LineWidth',1.5);
+bh(1) = bar(nan,nan,'FaceColor',hex2rgb('#a6cee3'));
+bh(2) = bar(nan,nan,'FaceColor',hex2rgb('#1f78b4'));
+bh(3) = bar(nan,nan,'FaceColor',hex2rgb('#b2df8a'));
+bh(4) = bar(nan,nan,'FaceColor',hex2rgb('#33a02c'));
+hold off
+xticklabels({'90','180','365'})
+legend(bh,({'25 nM Ara-C','125 nM Ara-C','10 nM Budesonide','1.5 nM Mometasone'}),'Location','bestoutside');
+xlabel('Time (days)')
+ylabel('Fold Change in LSC Number')
+set(gca,'FontSize',18,'TickLength',[0.02 0.025])
 
-b_Glu = figure;
-tiledlayout(2,3,'TileSpacing','compact');
+%% T-test compare budesonide and mometasone to Ara-C
 
-nexttile %Budesonide (day 90)
-fBud_90 = fliplr(Bud_90);
-[N,M] = size(fBud_90);
-hold on
-for i = 1:M
-    boxchart(fBud_90(:,i),'MarkerStyle','none','BoxFaceColor',box_colorGlu(i,:),'XData',i*ones(N,1))
-    plot(i,mean(fBud_90(:,i)),'*','LineWidth',2,'MarkerSize',10,'MarkerEdgeColor',box_colorGlu(i,:))
-end
-ax = gca();
-ax.XAxis.Categories = categorical(1:M);
-xticklabels({'0','0.25','1.5','10','25'})
-ylabel('LSC Number at Day 90')
-ylim([3750 11000])
-set(gca,'FontSize',18,'TickDir','out','TickLength',[0.02 0.025])
-ax = gca;
-ax.YAxis.Exponent = 3;
-title('Budesonide','FontSize',20)
+%LSC
+[h90_LSC_AraC125_Bud10,p90_LSC_AraC125_Bud10] = ttest2(AraC_LSC90(:,1),Bud_LSC90(:,2),'Vartype','unequal','Alpha',0.01);
+[h180_LSC_AraC125_Bud10,p180_LSC_AraC125_Bud10] = ttest2(AraC_LSC180(:,1),Bud_LSC180(:,2),'Vartype','unequal','Alpha',0.01);
+[h365_LSC_AraC125_Bud10,p365_LSC_AraC125_Bud10] = ttest2(AraC_LSC365(:,1),Bud_LSC365(:,2),'Vartype','unequal','Alpha',0.01);
 
-nexttile %Mometasone (day 90)
-fMom_90 = fliplr(Mom_90);
-[N,M] = size(fMom_90);
-hold on
-for i = 1:M
-    boxchart(fMom_90(:,i),'MarkerStyle','none','BoxFaceColor',box_colorGlu(i,:),'XData',i*ones(N,1))
-    plot(i,mean(fMom_90(:,i)),'*','LineWidth',2,'MarkerSize',10,'MarkerEdgeColor',box_colorGlu(i,:))
-end
-ax = gca();
-ax.XAxis.Categories = categorical(1:M);
-xticklabels({'0','0.25','1.5','10','25'})
-ylim([-50 11000])
-set(gca,'FontSize',18,'TickDir','out','TickLength',[0.02 0.025])
-ax = gca;
-ax.YAxis.Exponent = 3;
-title('Mometasone','FontSize',20)
+[h90_LSC_AraC125_Mom1_25,p90_LSC_AraC125_Mom1_25] = ttest2(AraC_LSC90(:,1),Mom_LSC90(:,3),'Vartype','unequal','Alpha',0.01);
+[h180_LSC_AraC125_Mom1_25,p180_LSC_AraC125_Mom1_25] = ttest2(AraC_LSC180(:,1),Mom_LSC180(:,3),'Vartype','unequal','Alpha',0.01);
+[h365_LSC_AraC125_Mom1_25,p365_LSC_AraC125_Mom1_25] = ttest2(AraC_LSC365(:,1),Mom_LSC365(:,3),'Vartype','unequal','Alpha',0.01);
 
-nexttile %AraC (day 90)
-fAraC_90 = fliplr(AraC_HSC90);
-[N,M] = size(fAraC_90);
-hold on
-for i = 1:M
-    boxchart(fAraC_90(:,i),'MarkerStyle','none','BoxFaceColor',box_color(i,:),'XData',i*ones(N,1))
-    plot(i,mean(fAraC_90(:,i)),'*','LineWidth',2,'MarkerSize',10,'MarkerEdgeColor',box_color(i,:))
-end
-ax = gca();
-ax.XAxis.Categories = categorical(1:M);
-xticklabels({'0','1','5','25','125'})
-ylabel('LSC Number at Day 90')
-ylim([5000 11000])
-set(gca,'FontSize',18,'TickDir','out','TickLength',[0.02 0.025])
-ax = gca;
-ax.YAxis.Exponent = 3;
-title('Cytarabine','FontSize',20)
+[h90_LSC_AraC25_Bud10,p90_LSC_AraC25_Bud10] = ttest2(AraC_LSC90(:,2),Bud_LSC90(:,2),'Vartype','unequal','Alpha',0.01);
+[h180_LSC_AraC25_Bud10,p180_LSC_AraC25_Bud10] = ttest2(AraC_LSC180(:,2),Bud_LSC180(:,2),'Vartype','unequal','Alpha',0.01);
+[h365_LSC_AraC25_Bud10,p365_LSC_AraC25_Bud10] = ttest2(AraC_LSC365(:,2),Bud_LSC365(:,2),'Vartype','unequal','Alpha',0.01);
 
-nexttile %Budesonide (day 365)
-fBud_365 = fliplr(Bud_365);
-[N,M] = size(fBud_365);
-hold on
-for i = 1:M
-    boxchart(fBud_365(:,i),'MarkerStyle','none','BoxFaceColor',box_colorGlu(i,:),'XData',i*ones(N,1))
-    plot(i,mean(fBud_365(:,i)),'*','LineWidth',2,'MarkerSize',10,'MarkerEdgeColor',box_colorGlu(i,:))
-end
-ax = gca();
-ax.XAxis.Categories = categorical(1:M);
-xticklabels({'0','0.25','1.5','10','25'})
-xlabel('Concentration (nM)')
-ylabel('LSC Number at Day 365')
-ylim([3500 4.5e+04])
-set(gca,'FontSize',18,'TickDir','out','TickLength',[0.02 0.025])
+[h90_LSC_AraC25_Mom1_25,p90_LSC_AraC25_Mom1_25] = ttest2(AraC_LSC90(:,2),Mom_LSC90(:,3),'Vartype','unequal','Alpha',0.01);
+[h180_LSC_AraC25_Mom1_25,p180_LSC_AraC25_Mom1_25] = ttest2(AraC_LSC180(:,2),Mom_LSC180(:,3),'Vartype','unequal','Alpha',0.01);
+[h365_LSC_AraC25_Mom1_25,p365_LSC_AraC25_Mom1_25] = ttest2(AraC_LSC365(:,2),Mom_LSC365(:,3),'Vartype','unequal','Alpha',0.01);
 
-nexttile %Mometasone (day 365)
-fMom_365 = fliplr(Mom_365);
-[N,M] = size(fMom_365);
-hold on
-for i = 1:M
-    boxchart(fMom_365(:,i),'MarkerStyle','none','BoxFaceColor',box_colorGlu(i,:),'XData',i*ones(N,1))
-    plot(i,mean(fMom_365(:,i)),'*','LineWidth',2,'MarkerSize',10,'MarkerEdgeColor',box_colorGlu(i,:))
-end
-ax = gca();
-ax.XAxis.Categories = categorical(1:M);
-xticklabels({'0','0.25','1.5','10','25'})
-xlabel('Concentration (nM)')
-ylim([-500 4.5e+04])
-set(gca,'FontSize',18,'TickDir','out','TickLength',[0.02 0.025])
+%HSC
+[h90_HSC_AraC125_Bud10,p90_HSC_AraC125_Bud10] = ttest2(AraC_HSC90(:,1),Bud_HSC90(:,2),'Vartype','unequal','Alpha',0.01);
+[h180_HSC_AraC125_Bud10,p180_HSC_AraC125_Bud10] = ttest2(AraC_HSC180(:,1),Bud_HSC180(:,2),'Vartype','unequal','Alpha',0.01);
+[h365_HSC_AraC125_Bud10,p365_HSC_AraC125_Bud10] = ttest2(AraC_HSC365(:,1),Bud_HSC365(:,2),'Vartype','unequal','Alpha',0.01);
 
-nexttile %AraC (day 365)
-fAraC_365 = fliplr(AraC_HSC365);
-[N,M] = size(fAraC_365);
-hold on
-for i = 1:M
-    boxchart(fAraC_365(:,i),'BoxFaceColor',box_color(i,:),'XData',i*ones(N,1))
-    plot(i,mean(fAraC_365(:,i)),'*','LineWidth',2,'MarkerSize',10,'MarkerEdgeColor',box_color(i,:))
-end
-ax = gca();
-ax.XAxis.Categories = categorical(1:M);
-xticklabels({'0','1','5','25','125'})
-xlabel('Concentration (nM)')
-ylim([1.5e+04 4.5e+04])
-ylabel('LSC Number at Day 365')
-set(gca,'FontSize',18,'TickDir','out','TickLength',[0.02 0.025])
+[h90_HSC_AraC125_Mom1_25,p90_HSC_AraC125_Mom1_25] = ttest2(AraC_HSC90(:,1),Mom_HSC90(:,3),'Vartype','unequal','Alpha',0.01);
+[h180_HSC_AraC125_Mom1_25,p180_HSC_AraC125_Mom1_25] = ttest2(AraC_HSC180(:,1),Mom_HSC180(:,3),'Vartype','unequal','Alpha',0.01);
+[h365_HSC_AraC125_Mom1_25,p365_HSC_AraC125_Mom1_25] = ttest2(AraC_HSC365(:,1),Mom_HSC365(:,3),'Vartype','unequal','Alpha',0.01);
 
-%% Save
+[h90_HSC_AraC25_Bud10,p90_HSC_AraC25_Bud10] = ttest2(AraC_HSC90(:,2),Bud_HSC90(:,2),'Vartype','unequal','Alpha',0.01);
+[h180_HSC_AraC25_Bud10,p180_HSC_AraC25_Bud10] = ttest2(AraC_HSC180(:,2),Bud_HSC180(:,2),'Vartype','unequal','Alpha',0.01);
+[h365_HSC_AraC25_Bud10,p365_HSC_AraC25_Bud10] = ttest2(AraC_HSC365(:,2),Bud_HSC365(:,2),'Vartype','unequal','Alpha',0.01);
 
-set(b_CarGly,'Units','Inches');
-pos = get(b_CarGly,'Position');
-set(b_CarGly,'PaperPositionMode','Auto','PaperUnits','Inches','PaperSize',[pos(3), pos(4)])
-print(b_CarGly,'T-test CarGly','-dpdf','-r0')
-
-set(b_Glu,'Units','Inches');
-pos = get(b_Glu,'Position');
-set(b_Glu,'PaperPositionMode','Auto','PaperUnits','Inches','PaperSize',[pos(3), pos(4)])
-print(b_Glu,'T-test Glu AraC','-dpdf','-r0')
+[h90_HSC_AraC25_Mom1_25,p90_HSC_AraC25_Mom1_25] = ttest2(AraC_HSC90(:,2),Mom_HSC90(:,3),'Vartype','unequal','Alpha',0.01);
+[h180_HSC_AraC25_Mom1_25,p180_HSC_AraC25_Mom1_25] = ttest2(AraC_HSC180(:,2),Mom_HSC180(:,3),'Vartype','unequal','Alpha',0.01);
+[h365_HSC_AraC25_Mom1_25,p365_HSC_AraC25_Mom1_25] = ttest2(AraC_HSC365(:,2),Mom_HSC365(:,3),'Vartype','unequal','Alpha',0.01);
 
