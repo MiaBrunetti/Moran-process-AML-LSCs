@@ -6,6 +6,7 @@ Dig = load('Digoxin_TreatmentModel.mat');
 Oua = load('Ouabain_TreatmentModel.mat');
 Bud = load('Budesonide_TreatmentModel.mat');
 Mom = load('Mometasone_TreatmentModel.mat');
+AraC = load('AraC_TreatmentModel.mat');
 
 %parameters of Moran process
 sim_num = 100;                                %number of simulation of the Moran Process
@@ -20,6 +21,7 @@ timeofDiv = linspace(0,sim_time,maxNoEvents); %time at which each division occur
 %setting doses 
 CarGly_doses_nM = [50 30 20 10]; %in nM
 Glu_doses_nM = [25 10 1.5 0.25]; %in nM
+AraC_doses_nM = [125 25 5 1];    %in nM
 
 %% Proscillaridin A
 
@@ -566,6 +568,115 @@ for i = 1:size(Glu_doses_nM,2)
     disp(['Mometasone Treatment Loop #' num2str(i) ''])
 end
 
+%% Cytarabine
+
+AraC.LSC = cell(size(AraC_doses_nM,2)+1,1); %number of LSCs
+AraC.vLSC = cell(size(AraC_doses_nM,2),1);  %LSC viability: #LSCs with drug/#LSCs without drug
+
+%Simulation without drug
+AraC.noDrug_vHSC = AraC.vHSC_Emax + AraC.vHSC_Emin;
+AraC.noDrug_vLSC = AraC.vLSC_Emax + AraC.vLSC_Emin;
+AraC.noDrug_sd = 0;
+AraC.noDrug_sp = 1.25;
+
+for sim = 1:sim_num  
+    id = frac*Nd;
+    x_LSC = id;
+    x_HSC = Nd-x_LSC;
+    LSC_diff_pool(sim,1) = 0;
+
+    for eventcount = 1:maxNoEvents
+       LSC_frequency(sim,eventcount) = x_LSC/x_HSC;
+       AraC.noDrug_LSC(sim,eventcount) = x_LSC;
+
+       AraC.d_LSC = x_LSC/(x_LSC+(1-AraC.noDrug_sd)*x_HSC);
+       AraC.d_HSC = (1-AraC.noDrug_sd)*x_HSC/(x_LSC+(1-AraC.noDrug_sd)*x_HSC);
+       AraC.p_LSC = AraC.noDrug_sp*x_LSC/(AraC.noDrug_sp*x_LSC+x_HSC);
+       AraC.p_HSC = x_HSC/(AraC.noDrug_sp*x_LSC+x_HSC);
+
+       event1 = AraC.d_LSC*AraC.p_LSC; 
+       event2 = AraC.d_LSC*AraC.p_HSC;
+       event3 = AraC.d_HSC*AraC.p_LSC;
+       event4 = AraC.d_HSC*AraC.p_HSC;
+
+       eventvec = cumsum([event1,event2,event3,event4]);
+       pval = rand;
+
+       if pval<eventvec(1)
+          id = id;
+          LSC_diff_pool(sim,eventcount+1) = LSC_diff_pool(sim,eventcount) + 1;
+       elseif pval<=eventvec(2)
+          id = id-1;
+          LSC_diff_pool(sim,eventcount+1) = LSC_diff_pool(sim,eventcount) + 1;   
+       elseif pval<=eventvec(3)
+          id = id+1;
+          LSC_diff_pool(sim,eventcount+1) = LSC_diff_pool(sim,eventcount);
+       else
+          id = id;
+          LSC_diff_pool(sim,eventcount+1) = LSC_diff_pool(sim,eventcount);
+       end
+       x_LSC = id;
+       x_HSC = Nd-x_LSC;
+    end
+end
+
+AraC.LSC{size(AraC_doses_nM,2)+1,1} = AraC.noDrug_LSC;
+disp('AraC No Drug Loop')
+
+%Simulation with treatment: Every 24hrs (once a day)
+AraC.Treatment_sd = 1-AraC.Treatment_vLSC./AraC.Treatment_vHSC  - (1-AraC.noDrug_vLSC./AraC.noDrug_vHSC);
+AraC.Treatment_sp = 1.25*(AraC.Treatment_vLSC/AraC.noDrug_vLSC);
+
+for i = 1:size(AraC_doses_nM,2)
+    for sim = 1:sim_num
+        id = frac*Nd;
+        x_LSC = id;
+        x_HSC = Nd-x_LSC;
+        LSC_diff_pool(sim,1) = 0;
+
+        for eventcount = 1:maxNoEvents
+           LSC_frequency(sim,eventcount) = x_LSC/x_HSC;
+           AraC.Treatment_LSC(sim,eventcount) = x_LSC;
+
+           %Picking the sd and sp value for the specific division event
+           AraC.event_sd = AraC.Treatment_sd(i,eventcount);
+           AraC.event_sp = AraC.Treatment_sp(i,eventcount);
+
+           AraC.d_LSC = x_LSC/(x_LSC+(1-AraC.event_sd)*x_HSC);
+           AraC.d_HSC = (1-AraC.event_sd)*x_HSC/(x_LSC+(1-AraC.event_sd)*x_HSC);
+           AraC.p_LSC = AraC.event_sp*x_LSC/(AraC.event_sp*x_LSC+x_HSC);
+           AraC.p_HSC = x_HSC/(AraC.event_sp*x_LSC+x_HSC);
+
+           event1 = AraC.d_LSC*AraC.p_LSC; 
+           event2 = AraC.d_LSC*AraC.p_HSC;
+           event3 = AraC.d_HSC*AraC.p_LSC;
+           event4 = AraC.d_HSC*AraC.p_HSC;
+
+           eventvec = cumsum([event1,event2,event3,event4]);
+           pval = rand;
+
+           if pval<eventvec(1)
+               id = id;
+               LSC_diff_pool(sim,eventcount+1) = LSC_diff_pool(sim,eventcount) + 1;
+           elseif pval<=eventvec(2)
+               id = id-1;
+               LSC_diff_pool(sim,eventcount+1) = LSC_diff_pool(sim,eventcount) + 1;   
+           elseif pval<=eventvec(3)
+               id = id+1;
+               LSC_diff_pool(sim,eventcount+1) = LSC_diff_pool(sim,eventcount);
+           else
+               id = id;
+               LSC_diff_pool(sim,eventcount+1) = LSC_diff_pool(sim,eventcount);
+           end
+           x_LSC = id;
+           x_HSC = Nd-x_LSC;
+        end
+    end
+    AraC.LSC{i,1} = AraC.Treatment_LSC;
+    AraC.vLSC{i,1} = (AraC.Treatment_LSC./AraC.noDrug_LSC).*100;
+    disp(['AraC Treatment Loop #' num2str(i) ''])
+end
+
 %% Save work
 
 % save('ProA_Moran.mat', '-struct', 'ProA');
@@ -573,6 +684,7 @@ end
 % save('Oua_Moran.mat', '-struct', 'Oua');
 % save('Bud_Moran.mat', '-struct', 'Bud');
 % save('Mom_Moran.mat', '-struct', 'Mom');
+% save('AraC_Moran.mat', '-struct', 'AraC');
 
 %% Figure for LSC expansion with cardiac glycoside treatment
 
@@ -647,7 +759,7 @@ options.error = 'std';
 options.x_axis = timeofDiv/(60*24);
 
 figure
-tiledlayout(2,2,'TileSpacing','compact');
+tiledlayout(2,3,'TileSpacing','compact');
 
 nexttile %Budesonide
 plot_areaerrorbar_multiple(Bud.LSC,options)
@@ -676,6 +788,38 @@ set(gca,'FontSize',18,'TickDir','out','TickLength',[0.02 0.025])
 nexttile %Mometasone
 plot_areaerrorbar_multiple(Mom.vLSC,options)
 xlabel('Time (days)')
+xlim([0 sim_time/(60*24)])
+ylim([0 120])
+set(gca,'FontSize',18,'TickDir','out','TickLength',[0.02 0.025])
+
+%% Figure for LSC expansion with AraC
+
+c = char('#B33DC6','#27AEEF','#87BC45','#EF9B20','#000000');
+color = hex2rgb(c);
+options.legend = [AraC_doses_nM 0];
+options.color_area = color;
+options.color_line = color;
+options.alpha = 0.1;
+options.line_width = 2;
+options.error = 'std';
+options.x_axis = timeofDiv/(60*24);
+
+figure
+tiledlayout(2,1,'TileSpacing','compact');
+
+nexttile
+plot_areaerrorbar_multiple(AraC.LSC,options)
+legend('Orientation','vertical','Location', 'eastoutside','FontSize',18)
+ylabel('LSC Number')
+xlim([0 sim_time/(60*24)])
+ylim([0 35000])
+set(gca,'FontSize',18,'TickDir','out','TickLength',[0.02 0.025])
+title('AraC','FontSize',20)
+
+nexttile
+plot_areaerrorbar_multiple(AraC.vLSC,options)
+xlabel('Time (days)')
+ylabel('LSC Viability (%)')
 xlim([0 sim_time/(60*24)])
 ylim([0 120])
 set(gca,'FontSize',18,'TickDir','out','TickLength',[0.02 0.025])
