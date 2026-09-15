@@ -7,6 +7,18 @@ Oua = load('Ouabain_PKPD.mat');
 Bud = load('Budesonide_PKPD.mat');
 Mom = load('Mometasone_PKPD.mat');
 
+%load cytarabine PK info
+AraC = load('AraC_cell_viability.mat');
+AraC.compartmentNb = 2;
+AraC.CL_pop = 272*1000/60; %in mL/min
+AraC.V_pop = 62.8*1000;    %in mL
+AraC.Q_pop = 13.7*1000/60; %in mL/min
+AraC.Vp_pop = 75.4*1000;   %in mL
+AraC.k_pop = AraC.CL_pop/AraC.V_pop;    %in 1/min
+AraC.k12_pop = AraC.Q_pop/AraC.V_pop;   %in 1/min
+AraC.k21_pop = AraC.Q_pop/AraC.Vp_pop;  %in 1/min
+AraC.units = (1/243.219)*10^9;          %mg/mL to nM
+
 modelfn_Tox = @(beta,C) beta(1)*(C.^beta(3))./(beta(2).^beta(3) + C.^beta(3));
 modelfn_Viab = @(beta,C) beta(2) - (beta(2)*C.^beta(4))./(beta(3).^beta(4) + C.^beta(4)) + beta(1);
 
@@ -21,6 +33,7 @@ timeofDiv = linspace(0,sim_time,maxNoEvents); %time at which each division occur
 %setting doses 
 CarGly_doses_nM = [50 30 20 10]; %in nM
 Glu_doses_nM = [25 10 1.5 0.25]; %in nM
+AraC_doses_nM = [125 25 5 1];    %in nM
 
 %% Daily IV bolus treatment simulation
 
@@ -218,6 +231,44 @@ for i = 1:size(Mom.doses,2)
     disp(['Mometasone Loop #' num2str(i) ''])
 end
 
+%Cytarabine
+AraC.doses_nM = AraC_doses_nM; %in nM
+AraC.doses = (AraC.doses_nM/AraC.units)*AraC.V_pop; %in mg
+
+AraC.NumberAdmins = 365;
+AraC.TimeFirstAdmin = 0;            %time of first administration
+AraC.DosingInterval = 24*60;        %in min
+AraC.TotalTime =...
+    [AraC.TimeFirstAdmin AraC.NumberAdmins*AraC.DosingInterval]; %in min
+AraC.TreatmentTime =...
+    AraC.TimeFirstAdmin:1:AraC.NumberAdmins*AraC.DosingInterval; %in min
+AraC.AdministrationTimes =...
+    linspace(AraC.TimeFirstAdmin,AraC.TimeFirstAdmin+(AraC.DosingInterval*(AraC.NumberAdmins-1)),AraC.NumberAdmins);
+
+AraC.TreatmentAc = zeros(size(AraC.doses,2),size(timeofDiv,2));
+AraC.TreatmentCc = zeros(size(AraC.TreatmentAc));
+AraC.Treatment_vHSC = zeros(size(AraC.TreatmentAc));
+AraC.Treatment_vLSC = zeros(size(AraC.TreatmentAc));
+
+for i = 1:size(AraC.doses,2)
+    AraC.Dose = AraC.doses(1,i); %in mg
+    AraC.initial_conds = [AraC.Dose 0];
+    
+    sol = simulation_PKPD_model(AraC); %solve ODE system to get treatment PK 
+    AraC.TreatmentAc(i,:) = deval(sol,timeofDiv,1);
+    for j = 2:AraC.NumberAdmins
+        idx = find(timeofDiv == AraC.AdministrationTimes(j));
+        if ~isempty(idx)
+            AraC.TreatmentAc(i,idx) = AraC.TreatmentAc(i,idx) + AraC.Dose/2;
+        end
+    end
+    AraC.TreatmentCc(i,:) = (AraC.TreatmentAc(i,:)/AraC.V_pop)*AraC.units; 
+    AraC.Treatment_vHSC(i,:) =  modelfn_Viab(AraC.vHSC_Para_fit,AraC.TreatmentCc(i,:)); 
+    AraC.Treatment_vLSC(i,:) = modelfn_Viab(AraC.vLSC_Para_fit,AraC.TreatmentCc(i,:)); 
+    
+    disp(['AraC Loop #' num2str(i) ''])
+end
+
 %%  Finding steady state toxicity
 
 d1 = 33927; %day 19 (20th adminitration)
@@ -257,6 +308,7 @@ end
 % save('Ouabain_TreatmentModel.mat', '-struct', 'Oua');
 % save('Budesonide_TreatmentModel.mat', '-struct', 'Bud');
 % save('Mometasone_TreatmentModel.mat', '-struct', 'Mom');
+% save('AraC_TreatmentModel.mat', '-struct', 'AraC');
 
 %% Figure 4A: Predicted PKPD responses of candidate cardiac glycosides
 
@@ -369,3 +421,20 @@ xlabel('Time (hours)')
 xlim([0,72])
 set(gca,'yscale','log','FontSize',18,'TickDir','out','TickLength',[0.02 0.025])
 title('Mometasone','FontSize',20)
+
+%Cytarabine
+c2 = char('#B33DC6','#27AEEF','#87BC45','#EF9B20');
+c2 = hex2rgb(c2);
+
+nexttile
+hold on
+for i = 1:size(AraC.doses,2)
+    plot(timeofDiv/60,AraC.TreatmentCc(i,:),'LineWidth',2,'Color',c2(i,:))
+end
+hold off
+legend(sprintf('%g nM',AraC_doses_nM(1,1)),sprintf('%g nM',AraC_doses_nM(1,2)),sprintf('%g nM',AraC_doses_nM(1,3)),sprintf('%g nM',AraC_doses_nM(1,4)),'Location', 'eastoutside','FontSize',16)
+xlabel('Time (hours)')
+xlim([0,72])
+ylim([1e-05,2e+02])
+set(gca,'yscale','log','FontSize',18,'TickDir','out','TickLength',[0.02 0.025])
+title('AraC','FontSize',20)
