@@ -44,6 +44,6 @@ Run "Commands_MoranProcessAML.m" and save work in [Figure realization](./Figure%
 Run "Commands_Figures.m" to display the graphs necessary to recreate Figures 2-5 and Supplementary Figure S1.
 
 ## Citations
-If you use any of the data or this code, please cite the following publication: 
+If you use any of the data or this code, please cite the following publication: <br>
 Brunetti M, Iasenza IA, Jenner AL, Raynal NJM, Eppert K, Craig M. Mathematical modelling of clonal reduction therapeutic strategies in acute myeloid leukemia. Leukemia Research. 2024;140:107485. [https://doi.org/10.1016/j.leukres.2024.107485.](https://github.com/user-attachments/assets/11db3f3d-7ed7-4619-96e9-bb09682bc8db).
 
