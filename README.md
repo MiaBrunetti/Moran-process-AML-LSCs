@@ -1,14 +1,48 @@
 # Moran-process-AML-LSCs
-Moran process of stem cell dynamics that describes the stochastic evolution of leukemic stem cells (LSCs) in acute myeloid leukemia (AML) and that integrates population pharmacokinetic-pharmacodynamic (PKPD) models to investigate the clonal reduction potential of anti-LSC drugs.
+This repository accompanies the article "Mathematical modelling of clonal reduction therapeutic strategies in acute myeloid leukemia". It includes the original cytarabine cell viability data and the necessary code for the mathematical analysis.
 
-This code accompanies the paper titled "Mathematical modelling of clonal reduction therapeutic strategies in acute myeloid leukemia".
+Authors: Mia Brunetti<sup>1,2</sup>; Isabella A. Iasenza<sup>3,4</sup>; Adrianne L. Jenner<sup>5</sup>; Noël J-M Raynal<sup>2,6</sup>; Kolja Eppert<sup>4,7</sup>; Morgan Craig<sup>1,2</sup><br>
+<sup>1</sup>Département de Mathématiques et de Statistiques, Université de Montréal, Montréal, Canada<br>
+<sup>2</sup>Sainte-Justine University Hospital Research Center, Montréal, Canada<br>
+<sup>3</sup>Division of Experimental Medicine, Department of Medicine, McGill University, Montréal, Canada<br>
+<sup>4</sup>Research Institute of the McGill University Health Centre, Canada<br>
+<sup>5</sup>School of Mathematical Sciences, Queensland University of Technology, Brisbane, Australia<br>
+<sup>6</sup>Département de Pharmacologie et Physiologie, Université de Montréal, Montréal, Canada<br>
+<sup>7</sup>Department of Pediatrics, McGill University, Montréal, Canada<br>
 
-To create Figure S1 in the paper, run "Commands_PK_fitting.m" in folder "Figure S1".
+## Repository structure
+| Folder | Description |
+|:-----|:------------|
+| Cell viability | Cell viability data and commands for IC50 curve fitting. |
+| Figure realization | Commands and functions for creating figures. |
+| Moran process | Commands for running the Moran process. |
+| PKPD responses | Commands for creating PKPD treatement models and for merging MATLAB structures. |
+| Pharmacokinetics fitting | Commands for fitting the drugs' pharmacokinetics models. |
+| Toxicity fitting | Cardiac glycoside toxicity data and commands for IC50 curve fitting. |
 
-To create Figure 2 in the paper, run "Commands_Cell_Viability_fitting.m" in folder "Figure 2".
+## Requirements
+- MATLAB R2025b or later.
 
-To create Figure 3 in the paper, run "Commands_Toxicity_fitting.m" in folder "Figure 3".
+## Workflow
+### 1. Pharmacokinetics Fitting
+Run "Commands_PK_fitting.m" and save work in the [PKPD responses](./PKPD%20response) folder.
 
-To create Figure 4 in the paper, first save work from "Commands_PK_fitting.m", "Commands_Cell_Viability_fitting.m", and "Commands_Toxicity_fitting.m" in folder "Figure 4". Then, run "Commands_merge_structure.m" and save work in folder "Figure 4". Finally, run "Commands_Treatment_Model.m" in folder "Figure 4".
+### 2. Cell Viability
+Run "Commands_Cell_Viability_fitting.m" and save work in the [PKPD responses](./PKPD%20response) folder.
 
-To create Figure 5 in the paper, first save work from "Commands_Treatment_Model.m" in folder "Figure 5". Then, run "Commands_MoranProcessAML.m" in folder "Figure 5".
+### 3. Toxicity Fitting
+Run "Commands_Toxicity_fitting.m" and save work in the [PKPD responses](./PKPD%20response) folder.
+
+### 4. PKPD Responses
+Run "Commands_merge_structure.m" and save work in [PKPD responses](./PKPD%20response) folder. Then, run "Commands_Treatment_Model.m" and save work in [Moran process](./Moran%20process) folder.
+
+### 5. Moran Process
+Run "Commands_MoranProcessAML.m" and save work in [Figure realization](./Figure%20realization) folder.
+
+### 6. Figure Realization
+Run "Commands_Figures.m" to display the graphs necessary to recreate Figures 2-5 and Supplementary Figure S1.
+
+## Citations
+If you use any of the data or this code, please cite the following publication: 
+Brunetti M, Iasenza IA, Jenner AL, Raynal NJM, Eppert K, Craig M. Mathematical modelling of clonal reduction therapeutic strategies in acute myeloid leukemia. Leukemia Research. 2024;140:107485. [https://doi.org/10.1016/j.leukres.2024.107485.](https://github.com/user-attachments/assets/11db3f3d-7ed7-4619-96e9-bb09682bc8db).
+
