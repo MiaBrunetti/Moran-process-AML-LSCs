@@ -1,12 +1,12 @@
 %% Commands for Figures
 
 %load work form Commands_Treatment_Model.mat
-ProA = load('ProA_Moran_Final.mat');
-Dig = load('Dig_Moran_Final.mat');
-Oua = load('Oua_Moran_Final.mat');
-Bud = load('Bud_Moran_Final.mat');
-Mom = load('Mom_Moran_Final.mat');
-AraC = load('AraC_Moran_Final.mat');
+ProA = load('ProA_Moran.mat');
+Dig = load('Dig_Moran.mat');
+Oua = load('Oua_Moran.mat');
+Bud = load('Bud_Moran.mat');
+Mom = load('Mom_Moran.mat');
+AraC = load('AraC_Moran.mat');
 
 %parameters of Moran process
 sim_num = 100;                                %number of simulation of the Moran Process
