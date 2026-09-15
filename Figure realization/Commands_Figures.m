@@ -23,6 +23,81 @@ AraC_doses_nM = [125 25 5 1]; %in nM
 CarGly_doses_nM = [50 30 20 10]; %in nM
 Glu_doses_nM = [25 10 1.5 0.25]; %in nM
 
+%% Figure S1: Population pharmacokinetics for each candidate drug
+
+figure
+tiledlayout(2,3,'TileSpacing','compact');
+
+%Proscillaridin A
+nexttile
+hold on 
+scatter(ProA.PK_dataTime/60, ProA.PK_dataConc.*ProA.units,'MarkerEdgeColor','#001253','MarkerFaceColor','#001253');
+plot(ProA.PK_simTime/60,ProA.Cc.*ProA.units,'Color','#001253','LineWidth',1.5); % plotting curve in nM per hour
+patch([ProA.PK_simTime/60, fliplr(ProA.PK_simTime/60)],[ProA.PK_ci(1,:)*ProA.units, fliplr(ProA.PK_ci(2,:)*ProA.units)],1,'facecolor','#001253', 'edgecolor', 'none', 'facealpha', 0.1); %CI
+hold off
+set(gca,'FontSize',18,'TickDir','out','TickLength',[0.02 0.025])
+set(gca,'xtick',0:6:24);
+xlabel('Time (hours)')
+ylabel('Concentration (nM)')
+title('Proscilaridin A','FontSize',20)
+xlim([0,24])
+
+%Digoxin
+nexttile
+hold on 
+scatter(Dig.PK_dataTime/60, Dig.PK_dataConc.*Dig.units,'MarkerEdgeColor','#001253','MarkerFaceColor','#001253');
+plot(Dig.PK_simTime/60,Dig.Cc.*Dig.units,'Color','#001253','LineWidth',1.5); % plotting curve in nM per hour
+patch([Dig.PK_simTime/60, fliplr(Dig.PK_simTime/60)],[Dig.PK_ci(1,:)*Dig.units, fliplr(Dig.PK_ci(2,:)*Dig.units)],1,'facecolor','#001253', 'edgecolor', 'none', 'facealpha', 0.1); %CI
+hold off
+set(gca,'FontSize',18,'TickDir','out','TickLength',[0.02 0.025])
+set(gca,'xtick',0:6:24);
+xlabel('Time (hours)')
+ylabel('Concentration (nM)')
+title('Digoxin','FontSize',20)
+xlim([0,24])
+
+%Ouabain
+nexttile
+hold on 
+scatter(Oua.PK_dataTime/60, Oua.PK_dataConc.*Oua.units,'MarkerEdgeColor','#001253','MarkerFaceColor','#001253');
+plot(Oua.PK_simTime/60,Oua.Cc.*Oua.units,'Color','#001253','LineWidth',1.5); % plotting curve
+patch([Oua.PK_simTime/60, fliplr(Oua.PK_simTime/60)],[Oua.PK_ci(1,:)*Oua.units, fliplr(Oua.PK_ci(2,:)*Oua.units)],1,'facecolor','#001253', 'edgecolor', 'none', 'facealpha', 0.1); %CI
+hold off
+set(gca,'FontSize',18,'TickDir','out','TickLength',[0.02 0.025])
+set(gca,'xtick',0:6:24,'yscale','log');
+xlabel('Time (hours)')
+ylabel('Concentration (nM)')
+title('Ouabain','FontSize',20)
+xlim([0,24])
+
+%Budesonide
+nexttile
+hold on 
+scatter(Bud.PK_dataTime/60, Bud.PK_dataConc.*Bud.units,'MarkerEdgeColor','#001253','MarkerFaceColor','#001253');
+plot(Bud.PK_simTime/60,Bud.Cc.*Bud.units,'Color','#001253','LineWidth',1.5); % plotting curve
+patch([Bud.PK_simTime/60, fliplr(Bud.PK_simTime/60)],[Bud.PK_ci(1,:)*Bud.units, fliplr(Bud.PK_ci(2,:)*Bud.units)],1,'facecolor','#001253', 'edgecolor', 'none', 'facealpha', 0.1); %CI
+hold off
+set(gca,'FontSize',18,'TickDir','out','TickLength',[0.02 0.025])
+set(gca,'xtick',0:6:24);
+xlabel('Time (hours)')
+ylabel('Concentration (nM)')
+title('Budesonide','FontSize',20)
+xlim([0,24])
+
+%Mometasone
+nexttile
+hold on 
+scatter(Mom.PK_dataTime/60, Mom.PK_dataConc.*Mom.units,'MarkerEdgeColor','#001253','MarkerFaceColor','#001253');
+plot(Mom.PK_simTime/60,Mom.Cc.*Mom.units,'Color','#001253','LineWidth',1.5); % plotting curve
+patch([Mom.PK_simTime/60, fliplr(Mom.PK_simTime/60)],[Mom.PK_ci(1,:)*Mom.units, fliplr(Mom.PK_ci(2,:)*Mom.units)],1,'facecolor','#001253', 'edgecolor', 'none', 'facealpha', 0.1); %CI
+hold off
+set(gca,'FontSize',18,'TickDir','out','TickLength',[0.02 0.025])
+set(gca,'xtick',0:6:24);
+xlabel('Time (hours)')
+ylabel('Concentration (nM)')
+title('Mometasone','FontSize',20)
+xlim([0,24])
+
 %% Figure 2A: Cell Viability
 
 F2A = figure;
